@@ -1,0 +1,22 @@
+#!/bin/bash
+# room-wake <room name> — bring an offline Claude room back (e.g. to hand it work) and wait until it is ready.
+# Already running = answers at once. Uses the claude-room API (local only). ROOM_PORT overrides 4630 for a test copy.
+set -euo pipefail
+[ $# -ge 1 ] || { echo "usage: room-wake <room name>" >&2; exit 2; }
+PORT=${ROOM_PORT:-4630}
+body=$(python3 -I -c 'import json,sys; print(json.dumps({"name": " ".join(sys.argv[1:])}))' "$@")
+out=$(curl -s -X POST -H 'content-type: application/json' -d "$body" "http://127.0.0.1:$PORT/api/rooms/wake" || true)
+id=$(python3 -I -c 'import json,sys
+try: print(json.loads(sys.argv[1]).get("id") or "")
+except Exception: print("")' "$out")
+[ -n "$id" ] || { echo "room-wake: $out" >&2; exit 1; }
+# Claude needs a few seconds to start (the room can look idle before its prompt is up): a room that was
+# actually woken gets at least 10 s, then must report idle (max 60 s).
+woke=$(python3 -I -c 'import json,sys; print(1 if json.loads(sys.argv[1]).get("woke") else 0)' "$out")
+[ "$woke" = 1 ] && sleep 10
+for _ in $(seq 1 25); do
+  st=$(curl -s "http://127.0.0.1:$PORT/api/rooms" | python3 -I -c 'import json,sys; print(next((r["state"] for r in json.load(sys.stdin) if r["id"]==sys.argv[1]), ""))' "$id")
+  [ "$st" = idle ] && { echo "ready: $id"; exit 0; }
+  sleep 2
+done
+echo "room-wake: $id started but is not idle yet" >&2; exit 1

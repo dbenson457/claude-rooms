@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<!-- iPad: Safari's top bar fades out the header, so .ipad adds --top-gap -->
+<script>(function(){var n=navigator;if((/iPad/.test(n.userAgent)||(n.platform==="MacIntel"&&n.maxTouchPoints>1))&&location.search.indexOf("embed=1")<0)document.documentElement.classList.add("ipad")})()</script>
+<title>Claude Rooms</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Claude">
+<meta name="theme-color" id="tc" content="#f3efe8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700..900&family=Inter:wght@400..900&family=JetBrains+Mono:wght@400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="room.css?v=52">
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="side">
+    <div class="sidetop">
+      <div class="brand">Claude<i>·</i>Rooms</div>
+      <button class="pillbtn" id="themebtn"></button>
+    </div>
+    <button class="newbtn" id="newbtn">＋ New tab</button>
+    <div class="sidenote" id="sidenote" hidden></div>
+    <nav class="rooms" id="rooms"></nav>
+  </aside>
+
+  <section class="chat" id="chat">
+    <header class="chead">
+      <button class="back" id="back" aria-label="Rooms">‹</button>
+      <div class="ctitle"><b id="cname">Pick a room</b><span id="cstate"></span></div>
+      <div class="cbtns" id="cbtns"></div>
+      <a class="pillbtn termbtn" href="#" hidden target="_blank" rel="noopener" title="Open the terminal" aria-label="Open the terminal">&gt;_</a>
+    </header>
+    <div class="feed" id="feed"><div class="empty">Pick a room on the left, or start a new tab.</div></div>
+    <div class="dock" id="dock">
+      <div class="hoffbar" id="hoff" hidden></div>
+      <div class="planbox" id="planbox" hidden></div>
+      <div class="bgtasks" id="bgtasks" hidden></div>
+      <div class="cards" id="closecard"></div>
+      <div class="cards" id="cards"></div>
+      <div class="spin" id="spin" hidden></div>
+      <div class="chips" id="chips" hidden></div>
+      <form class="composer" id="composer" hidden>
+        <div class="cmdsug" id="cmdsug" hidden></div>
+        <div class="cmdsheet" id="cmdsheet" hidden><div class="cmdpanel"><input id="cmdq" type="search" placeholder="Search commands…" autocomplete="off"><div class="cmdrows" id="cmdrows"></div></div></div>
+        <div class="thumbs" id="thumbs"></div>
+        <div class="row">
+          <button type="button" class="slash" id="slashbtn" title="Commands" aria-label="Commands">/</button>
+          <label class="attach" title="Add a picture or document">＋<input type="file" id="file" multiple hidden></label>
+          <textarea id="msg" rows="1" placeholder="Message Claude…"></textarea>
+          <button class="send" id="sendbtn" aria-label="Send">↑</button>
+        </div>
+      </form>
+      <div class="foot" id="foot" hidden></div>
+    </div>
+  </section>
+</div>
+
+<div class="drawer" id="drawer" hidden>
+  <div class="dpanel">
+    <div class="dhead"><b>Steps</b><button class="pillbtn" id="dclose">Close</button></div>
+    <div class="dbody" id="dbody"></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="room.js?v=91"></script>
+</body>
+</html>

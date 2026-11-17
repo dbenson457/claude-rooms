@@ -1,0 +1,19 @@
+{
+  "name": "claude-rooms",
+  "version": "0.1.0",
+  "description": "Claude Code chat rooms in the browser: every tmux tab running Claude, mirrored live",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=20.12" },
+  "scripts": {
+    "start": "node server.js",
+    "test-copy": "ROOM_TEST=1 ROOM_PORT=4631 node server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.0"
+  }
+}

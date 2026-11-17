@@ -1,0 +1,417 @@
+:root{--top-gap:0px}html.ipad{--top-gap:20px}
+/* Claude rooms. Same tokens as the home dashboard: light by day, dark by night, Terminal blue. */
+:root{--bg:#f3efe8;--card:#fffdf9;--card2:#f5efe6;--ink:#1b1a17;--dim:#5f594f;--line:#e6dfd3;--accent:#e2471c;--good:#14834c;--warn:#a96500;--bad:#cf2d2d;--info:#1f6fb2;--track:#ece5d9;--shadow:0 1px 2px rgba(60,40,10,.05),0 8px 24px rgba(60,40,10,.06);--num:'Fraunces',serif;--grid:none;--r:22px;--me:#1b1a17;--meink:#f3efe8}
+:root[data-theme=night]{--bg:#05080b;--card:#0b1016;--card2:#121a23;--ink:#dce7f1;--dim:#93a3b6;--line:#1d2732;--accent:#39ff9f;--good:#39ff9f;--warn:#ffb547;--bad:#ff5c76;--info:#4dd8ff;--track:#17202a;--shadow:none;--num:'JetBrains Mono',monospace;--grid:linear-gradient(#0f1821 1px,transparent 1px),linear-gradient(90deg,#0f1821 1px,transparent 1px);--r:6px;--me:#123326;--meink:#dce7f1}
+:root[data-theme=term]{--bg:#092451;--card:#0d2c5e;--card2:#12346b;--ink:#edf3f7;--dim:#8a9fa9;--line:#263d61;--accent:#d1f1a8;--good:#d1f1a8;--warn:#ffe15d;--bad:#ff8f8f;--info:#8fd3ff;--track:#355669;--shadow:none;--num:'JetBrains Mono',monospace;--grid:none;--r:4px;--me:#163a72;--meink:#edf3f7}
+[data-theme=term] body,[data-theme=term] .brand,[data-theme=term] .btn,[data-theme=term] .pillbtn,[data-theme=term] textarea{font-family:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);background-image:var(--grid);background-size:32px 32px;background-attachment:fixed;color:var(--ink);font-family:Inter,system-ui,sans-serif;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.mono{font-family:'JetBrains Mono',monospace}
+
+.app{display:grid;grid-template-columns:290px 1fr;height:var(--vvh,100dvh)}
+.side{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;padding:calc(12px + env(safe-area-inset-top) + var(--top-gap)) 12px 12px;background:color-mix(in srgb,var(--card) 55%,transparent)}
+.sidetop{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 4px 12px}
+.brand{font-family:Fraunces,serif;font-weight:900;font-size:21px;letter-spacing:-.02em;white-space:nowrap}
+.brand i{font-style:normal;color:var(--accent)}
+:is([data-theme=night],[data-theme=term]) .brand{font-family:'JetBrains Mono';font-size:16px;letter-spacing:.16em}
+.pillbtn{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:8px 12px;min-height:34px;font-weight:600;font-size:13px;white-space:nowrap}
+.newbtn{border:1px dashed var(--line);background:none;border-radius:calc(var(--r) - 8px);padding:11px;font-weight:600;font-size:15px;text-align:left;color:var(--dim);margin-bottom:10px}
+.rooms{overflow-y:auto;display:flex;flex-direction:column;gap:6px;min-height:0}
+.room{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:calc(var(--r) - 8px);border:1px solid transparent;background:none;text-align:left;width:100%}
+.room:hover{background:var(--card)}
+.room.on{background:var(--card);border-color:var(--line);box-shadow:var(--shadow)}
+.room .nm{font-weight:600;font-size:15.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.room .tag{font:600 12px 'JetBrains Mono';color:var(--dim);white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--dim);flex:none;opacity:.5}
+.dot.idle{background:var(--good);opacity:1}
+.dot.busy,.dot.working{background:var(--info);opacity:1;animation:pulse 1.6s infinite}
+.dot.waiting{background:var(--warn);opacity:1;animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,currentColor 50%,transparent)}100%{box-shadow:0 0 0 8px transparent}}
+
+.chat{display:flex;flex-direction:column;min-width:0;min-height:0}
+.chead{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top) + var(--top-gap)) 16px 10px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.back{display:none;border:0;background:none;font-size:30px;line-height:1;padding:0 6px 4px 0}
+.ctitle{flex:1;min-width:0;display:flex;flex-direction:column}
+.ctitle b{font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctitle span{font:600 12.5px 'JetBrains Mono';color:var(--dim);display:flex;align-items:center;gap:6px}
+.ctitle span.waiting{color:var(--warn)}
+.cbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:7px 13px;min-height:34px;font-weight:600;font-size:14px;white-space:nowrap}
+.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+:is([data-theme=night],[data-theme=term]) .btn.pri{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.btn.bad{color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:default}
+.menu{position:relative}
+.menu .pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;min-width:200px;display:flex;flex-direction:column}
+.menu .pop button,.menu .pop label,.menu .pop a{color:inherit;text-decoration:none;border:0;background:none;text-align:left;padding:9px 10px;border-radius:9px;font-size:15px;display:flex;gap:8px;align-items:center}
+.menu .pop a:hover,.menu .pop button:hover{background:var(--card2)}
+.menu .pop select{font:inherit;color:inherit;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:4px}
+
+.feed{flex:1;overflow-y:auto;padding:18px 16px 24px;display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain}
+.feed>*{max-width:1500px;width:100%;margin-left:auto;margin-right:auto}
+.empty{color:var(--dim);text-align:center;margin-top:20vh!important}
+.more{align-self:center;width:auto!important}
+.me{align-self:flex-end;max-width:min(900px,88%)!important;margin-right:0!important;background:var(--me);color:var(--meink);padding:10px 14px;border-radius:18px 18px 4px 18px;white-space:pre-wrap;word-wrap:break-word;font-size:16px;line-height:1.45}
+:is([data-theme=night],[data-theme=term]) .me{border:1px solid #1f5a40;border-radius:6px}
+.me .img{display:inline-block;font:600 12px 'JetBrains Mono';opacity:.8;margin-right:6px}
+.me img{max-width:160px;max-height:160px;border-radius:10px;display:block;margin-bottom:6px}
+.cmd{align-self:flex-end;font:600 13px 'JetBrains Mono';color:var(--dim)}
+.ai{font-size:16px;line-height:1.6;word-wrap:break-word}
+.ai p{margin:0 0 .6em}.ai p:last-child{margin-bottom:0}
+.ai ul{margin:0 0 .6em;padding-left:2ch}.ai ol{margin:0 0 .6em;padding-left:3.2ch}.ai li::marker{color:var(--dim)}.ai li>ul,.ai li>ol{margin:.15em 0 .15em}
+.ai li{margin:.15em 0}
+.ai h1,.ai h2,.ai h3,.ai h4{font-size:16.5px;margin:.8em 0 .3em}
+.ai code{font:14px 'JetBrains Mono';background:var(--card2);border:1px solid var(--line);border-radius:5px;padding:1px 4px}
+.ai pre{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-x:auto;margin:0 0 .6em}
+.ai pre code{border:0;background:none;padding:0;font-size:13.5px}
+.ai a{color:var(--info)}
+.ai table{border-collapse:collapse;margin:0 0 .6em;font-size:14.5px;display:block;overflow-x:auto}
+.ai th,.ai td{border:1px solid var(--line);padding:4px 8px;text-align:left}
+.ai.live::after{content:'▍';color:var(--accent);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.sum{font:600 13px 'JetBrains Mono';color:var(--dim);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sum .bad{color:var(--bad)}
+.sum button{border:0;background:none;padding:0;color:var(--info);font:inherit;text-decoration:underline}
+.note{font:600 13.5px 'JetBrains Mono';color:var(--dim);border-left:3px solid var(--line);padding:4px 10px}
+.note.bad{border-color:var(--bad);color:var(--bad)}
+.note.warn{border-color:var(--warn);color:var(--warn)}
+
+.dock{border-top:1px solid var(--line);background:color-mix(in srgb,var(--bg) 94%,transparent);padding:10px 16px calc(8px + env(safe-area-inset-bottom))}
+.dock>*{max-width:1500px;margin-left:auto;margin-right:auto}
+.planbox{--pk:#d660af;background:var(--card);border:1px solid var(--pk);border-radius:6px;padding:8px 12px 10px;margin-bottom:10px;font:13.5px/1.55 'JetBrains Mono',monospace}
+.planbox .ph{display:flex;gap:12px;justify-content:space-between;color:var(--pk)}
+.planbox .pt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.planbox .pe{color:var(--dim);flex:none}
+.planbox .pp{display:flex;gap:12px;align-items:center;color:var(--dim);margin:1px 0 4px}
+.planbox .pp span:first-child{flex:none}
+.planbox .pbar{flex:1;height:12px;background:var(--track);min-width:40px}
+.planbox .pbar i{display:block;height:100%;background:var(--pk);transition:width .5s}
+.planbox .pp b{color:var(--pk);flex:none;min-width:4ch;text-align:right}
+.planbox ol{list-style:none;padding:0;display:grid;grid-template-columns:auto auto 100px 1fr;column-gap:10px;row-gap:1px}
+.planbox li{display:contents}
+.planbox li i{font-style:normal;text-align:center}
+.planbox .chip{background:var(--track);height:100%;min-height:18px}
+.planbox .pn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;max-width:46vw}
+.planbox li.done i{color:var(--good)}.planbox li.done .chip{background:#5fb086}.planbox li.done .pl{color:#5fb086}
+.planbox li.now .pn{font-weight:700}.planbox li.now i,.planbox li.now .pl{color:var(--pk)}
+.planbox li.now .chip{background:#a35299 linear-gradient(90deg,transparent 0 40%,#fff 40% 60%,transparent 60%) no-repeat;background-size:100px 100%;animation:pslide 1.6s ease-in-out infinite alternate}
+@keyframes pslide{from{background-position:-40px 0}to{background-position:40px 0}}
+.planbox li.todo{color:var(--dim)}.planbox li.todo .pn,.planbox li.todo .pl{opacity:.85}
+.planbox.all{border-color:var(--good)}.planbox.all .pp b,.planbox.all .pbar i{color:var(--good);background:var(--good)}.planbox.all .pp b{background:none}
+
+.card{background:var(--card);border:1.5px solid var(--warn);border-radius:14px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.card h4{font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);margin-bottom:6px}
+.card .body{font-size:15px;line-height:1.45;max-height:42vh;overflow-y:auto}
+.card pre{font:13.5px 'JetBrains Mono';background:var(--card2);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre-wrap;word-break:break-word;margin:6px 0}
+.card .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.card .q{margin-top:8px}
+.card .q b{display:block;margin-bottom:6px}
+.card .opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--card2);border-radius:10px;padding:9px 11px;margin-bottom:6px}
+.card .opt small{display:block;color:var(--dim);font-size:13.5px;margin-top:2px}
+.card .opt.sel{border-color:var(--accent);outline:1px solid var(--accent)}
+.card input[type=text]{width:100%;font:inherit;color:inherit;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.card.blocked{border-color:var(--bad)}.card.blocked h4{color:var(--bad)}
+
+.composer .row{display:flex;gap:8px;align-items:flex-end;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:6px 6px 6px 8px;box-shadow:var(--shadow)}
+:is([data-theme=night],[data-theme=term]) .composer .row{border-radius:8px}
+.attach{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;font-size:20px;color:var(--dim);cursor:pointer;flex:none}
+textarea{flex:1;border:0;background:none;resize:none;font:16.5px/1.45 Inter,system-ui,sans-serif;color:var(--ink);padding:7px 2px;max-height:180px;outline:none;min-width:0}
+.send{width:36px;height:36px;border-radius:50%;border:0;background:var(--ink);color:var(--bg);font-size:18px;font-weight:700;flex:none}
+:is([data-theme=night],[data-theme=term]) .send{background:var(--accent);color:var(--bg)}
+.send.stop{background:var(--bad);color:#fff;font-size:14px}
+.thumbs{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.thumbs:empty{display:none}
+.thumbs span{position:relative}
+.thumbs img{width:56px;height:56px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.thumbs .doc{display:flex;align-items:center;height:56px;max-width:180px;padding:0 12px;border-radius:10px;border:1px solid var(--line);font-weight:500;font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.thumbs button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:0;background:var(--ink);color:var(--bg);font-size:13px;line-height:1}
+
+.foot{font:500 12.5px/1.6 'JetBrains Mono',monospace;color:var(--ink);margin-top:8px;display:flex;flex-direction:column;gap:1px}
+/* status lines wrap to fit the screen, never scroll sideways */
+.foot .l{white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden}
+.foot .l::-webkit-scrollbar{display:none}
+/* line 1 flows like the terminal: each bar sits right next to its percentage (was spread edge to edge) */
+.foot .l1{display:block;white-space:pre-wrap}
+.foot .hand{border:0;background:none;padding:0;font:inherit;color:var(--dim);text-decoration:underline;white-space:nowrap}
+.foot .mode{color:var(--warn)}
+.a-g{color:var(--good)}.a-r{color:var(--bad)}.a-y{color:var(--warn)}.a-c{color:var(--info)}.a-d{opacity:.6}.a-b{font-weight:700}
+
+.drawer{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.35);display:flex;justify-content:flex-end}
+.dpanel{width:min(980px,100%);height:100%;background:var(--bg);border-left:1px solid var(--line);display:flex;flex-direction:column}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:calc(12px + env(safe-area-inset-top) + var(--top-gap)) 16px 12px;border-bottom:1px solid var(--line)}
+.dbody{overflow-y:auto;padding:10px 16px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:2px}
+.dsum{font:600 13px 'JetBrains Mono';color:var(--dim);padding:2px 0 8px}
+.step{border-radius:8px;min-width:0}
+.step summary{list-style:none;display:flex;gap:10px;align-items:baseline;padding:6px 8px;border-radius:8px;cursor:pointer;font:14px/1.4 'JetBrains Mono',monospace;min-width:0}
+.step summary::-webkit-details-marker{display:none}
+.step summary:hover,.step[open] summary{background:var(--card)}
+.step .t{color:var(--dim);font-size:12px;min-width:2ch;text-align:right;flex:none}
+.step b{flex:none;font-weight:700}
+.step .w{color:var(--dim);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.step .x{flex:none;font-weight:700;color:var(--dim)}.step .x.ok{color:var(--good)}
+.step .sd{padding:4px 8px 10px 32px;font-size:14px}
+.step .sd pre{font:13px/1.45 'JetBrains Mono';background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;overflow:auto;max-height:300px;white-space:pre;margin-top:6px}
+.diff .del{background:color-mix(in srgb,var(--bad) 16%,transparent);display:block}
+.diff .add{background:color-mix(in srgb,var(--good) 16%,transparent);display:block}
+
+.newform{display:flex;gap:6px;margin-bottom:10px}
+.newform input{flex:1;min-width:0;font:inherit;font-size:15px;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 11px}
+.popl{font:700 12px 'JetBrains Mono';letter-spacing:.08em;text-transform:uppercase;color:var(--dim);padding:8px 10px 2px;border-top:1px solid var(--line);margin-top:4px}
+.btn.mode-auto{color:var(--good)}.btn.mode-plan{color:var(--info)}.btn.mode-edits{color:var(--warn)}
+.spin{font:600 13.5px 'JetBrains Mono';color:var(--accent);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card.dlg{border-color:var(--accent)}
+.card.dlg .hl{font:13.5px/1.5 'JetBrains Mono',monospace;white-space:pre-wrap;word-break:break-word}
+.card.dlg hr{border:0;border-top:1px dashed var(--line);margin:6px 0}
+.card .opts{margin-top:10px}
+.card .opt b{font-family:'JetBrains Mono';margin-right:4px}
+.card .typed{display:flex;gap:6px;margin-top:4px}
+.card .typed input{flex:1;min-width:0}
+.card .typed:not([hidden])~.acts{margin-top:8px}
+.card .notes{display:flex;margin-top:8px}
+.card .notes input{flex:1;min-width:0}
+.card .notes~.acts{margin-top:8px}
+/* Feed rows: the terminal's shape (❯ you · ● Claude · ● Tool(args) ⎿ result · ✻ Worked for). */
+.turn{display:flex;flex-direction:column;gap:10px}
+.u,.a,.res{display:flex;gap:10px;min-width:0}
+.u>div,.a>div,.res>span:last-child{min-width:0;flex:1}
+.g{flex:none;width:14px;text-align:center;font-family:'JetBrains Mono',monospace}
+.u{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 12px 8px 10px;font-size:16px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word}
+:is([data-theme=night],[data-theme=term]) .u{border-radius:4px}
+[data-theme=term] .u{background:#3a3a3a;border:0;border-radius:0;color:#f4f4f4;font-family:'JetBrains Mono',monospace;padding:6px 12px 6px 8px}
+[data-theme=term] .u .g{color:#f4f4f4}
+.u .g{color:var(--dim);line-height:1.45}
+.u.cmd{font:600 14px 'JetBrains Mono',monospace;color:var(--dim)}
+.u .img{font:600 12px 'JetBrains Mono';margin-right:6px;color:var(--dim)}
+.a .g{color:var(--ink);font-size:13px;line-height:1.55rem}
+.res{font:13.5px/1.5 'JetBrains Mono',monospace;color:var(--dim);padding-left:24px}
+.res .g{width:auto}
+.res>span:last-child{white-space:pre-wrap;word-break:break-word}
+.res.bad,.bad{color:var(--bad)}
+.d{opacity:.75}
+.sum{padding-left:0}
+.sum .g{color:var(--accent)}
+.new{animation:rise .32s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.spin{animation:rise .3s both}
+/* Claude's bullet pops, then the text rises in; the ✻ line fades in when the turn ends. */
+.a.new{animation:none}
+.a.new>.g{animation:pop .4s cubic-bezier(.3,1.6,.5,1) both}
+.a.new>.ai{animation:rise .38s .06s cubic-bezier(.2,.7,.3,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:none}}
+.sum:not([hidden]){animation:fade .5s both}
+@keyframes fade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.new,.spin,.a.new>.g,.a.new>.ai,.sum{animation:none!important}}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr}
+  .side{border-right:0;padding-left:16px;padding-right:16px}
+  .app.inroom .side{display:none}
+  .app:not(.inroom) .chat{display:none}
+  .back{display:block}
+  .chead{padding-left:10px;padding-right:12px}
+  .cbtns .btn{padding:6px 10px;font-size:13.5px}
+  .feed{padding-left:14px;padding-right:14px}
+  .dock{padding-left:10px;padding-right:10px}
+  .foot{font-size:11.5px}
+  .foot .l1{display:block;white-space:pre-wrap}
+  .foot .l:not(.l1){display:none}
+}
+[data-theme=term] .spin{color:#e07a5f}
+.u.sending{animation:sendup .42s cubic-bezier(.2,.8,.25,1) both}
+.u.sending .g{animation:sendglow 1.2s ease-in-out .4s infinite alternate}
+@keyframes sendup{from{opacity:0;transform:translateY(46px) scale(.97)}60%{opacity:1}to{opacity:1;transform:none}}
+@keyframes sendglow{to{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.u.sending,.u.sending .g{animation:none}}
+/* Dialogs never grow past the screen: the card body scrolls, the options stay in view.
+   A plan opens as a sheet that takes the chat column below the header (user report: couldn't scroll it). */
+.dock{display:flex;flex-direction:column;max-height:calc(100% - 56px);min-height:0}
+.dock>.cards{min-height:0;display:flex;flex-direction:column;flex:0 1 auto}
+.card.dlg{display:flex;flex-direction:column;min-height:0;max-height:100%}
+.card.dlg .body{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.card.dlg .opts,.card.dlg .acts,.card.dlg .typed,.card.dlg .notes{flex:none}
+.card.dlg:not(.plan) .body{max-height:42vh}
+/* Questions with big previews: the question + tabs stay put and the option list scrolls inside the card
+   (it used to grow past the screen and squash the question to nothing). Plans keep the body scrolling. */
+.card.dlg:not(.plan) .body{flex:0 0 auto;max-height:22vh}
+.card.dlg:not(.plan) .opts{flex:0 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.card.dlg .qtabs{flex:none}
+.dock.sheet{flex:1 1 auto;max-height:none}
+.dock.sheet~*{display:none}
+.chat:has(.dock.sheet) .feed{flex:0 0 0;padding:0;overflow:hidden}
+.dock.sheet>.cards{flex:1 1 auto}
+.dock.sheet .card.dlg{flex:1 1 auto}
+.dock.sheet #composer,.dock.sheet .spin,.dock.sheet .planbox{display:none!important}
+.card.dlg.plan .body{font-size:16px;line-height:1.55;padding-right:6px}
+.card.dlg.plan .body .ai{font-size:16px}
+.card.dlg.plan .opt{font-size:16px;padding:11px 13px}
+.dock>*{width:100%}
+/* Scrollbars only while scrolling (user ask: no permanent scroll bar in Chrome). */
+/* The bar always keeps its (thin) space and is only coloured while scrolling, so text never shifts. */
+*{scrollbar-width:thin;scrollbar-color:transparent transparent}
+.scrolling{scrollbar-color:color-mix(in srgb,var(--dim) 60%,transparent) transparent}
+/* Plan sheet = the terminal's plan view: mono, bold (not bigger) headings, 2-char indents with
+   hanging wraps, equal padding both sides. */
+.card.dlg.plan{padding:16px 18px}
+.card.dlg.plan h4{margin:0 0 10px}
+.card.dlg.plan .body{scrollbar-gutter:stable both-edges;padding:0}
+.card.dlg.plan .body .ai{font:15.5px/1.6 'JetBrains Mono',monospace}
+/* --g = the reserved scroll-bar space on each side (set from JS), so title + buttons line up with the text. */
+.card.dlg.plan>h4,.card.dlg.plan .opts,.card.dlg.plan .acts,.card.dlg.plan .typed{margin-left:var(--g,0px);margin-right:var(--g,0px)}
+.card.dlg.plan .ai h1,.card.dlg.plan .ai h2,.card.dlg.plan .ai h3,.card.dlg.plan .ai h4{font:700 15.5px/1.6 'JetBrains Mono',monospace;margin:1em 0 .2em;text-transform:none;letter-spacing:0;color:var(--ink)}
+.card.dlg.plan .ai>:first-child{margin-top:0}
+.card.dlg.plan .ai ul,.card.dlg.plan .ai ol{padding-left:2ch;margin:.1em 0 .5em}
+.card.dlg.plan .ai ol{padding-left:3ch}
+.card.dlg.plan .ai li{margin:0;padding-left:.5ch}
+.card.dlg.plan .ai ul>li::marker{content:'- '}
+.card.dlg.plan .opts,.card.dlg.plan .acts{margin-top:12px}
+
+.pop hr{border:0;border-top:1px solid var(--line);margin:4px 0}
+.pop button.bad{color:var(--bad)}
+.card.closing{border-color:var(--bad)}.card.closing h4{color:var(--bad)}
+.card.closing .warnl{color:var(--warn);margin-top:6px}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:#fff}
+.sidenote{font:600 13px 'JetBrains Mono';color:var(--dim);border-left:3px solid var(--good);padding:6px 10px;margin:0 12px 8px}
+
+/* embedded in the home dashboard (?embed=1) */
+.embed .brand,.embed #themebtn{display:none}
+.embed .sidetop{display:none}
+.embed #back{display:none}
+@media (max-width:700px){.embed #back{display:block}} /* phone: this ‹ closes the chat sheet (the home bar is hidden) */
+.embed body{background-attachment:scroll}
+/* Assistant quick questions: one scrolling row above the message box */
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 8px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:7px 13px;font:600 13.5px 'JetBrains Mono',monospace;cursor:pointer;white-space:nowrap}
+.chip:hover{border-color:var(--accent)}
+.chip.new{color:var(--dim)}
+/* Question cards built from the question itself: header chip, question, previews under each option */
+.card .qh{display:inline-block;font:600 12px 'JetBrains Mono',monospace;color:var(--accent);border:1px solid var(--line);border-radius:99px;padding:2px 9px;margin-bottom:8px}
+.card .qq{font-weight:600;font-size:15.5px;line-height:1.45}
+.card .qm{color:var(--dim);font-size:13px;margin-top:4px}
+.card .opt .pv{margin:8px 0 2px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:13px/1.45 'JetBrains Mono',monospace;white-space:pre;max-height:320px;overflow:auto}
+/* Diagrams keep their shape: one line stays one line, the box scrolls sideways on a narrow screen */
+.ai pre,.card .opt .pv{max-width:100%;-webkit-overflow-scrolling:touch}
+.ai pre code{white-space:pre}
+.ai,.feed .t,.card .opt{min-width:0}
+@media (max-width:760px){.card .opt .pv,.ai pre code{font-size:12px}}
+/* Box characters only join up at tight line spacing */
+.ai pre,.ai pre code,.card .opt .pv{line-height:1.2}
+/* room for the coming reply under a just-sent message (same as a reply line + the gap above it) */
+.feed.awaiting{padding-bottom:36px}
+/* Question sets: tabs like the terminal's "← ☐ Fruit ☒ Colours ✔ Submit →" */
+.card .qtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;flex:none}
+.card .qtab{font:600 13px 'JetBrains Mono',monospace;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--dim);cursor:pointer}
+.card .qtab.done{color:var(--ink)}
+.card .qtab.cur{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.card .opt.on{border-color:var(--good)}
+.card .opt.on>b{color:var(--good)}
+.card .opt.typ i{color:var(--dim)}
+.card .acts .btn:disabled{opacity:.45}
+.card .qn{font:600 12.5px 'JetBrains Mono',monospace;color:var(--dim);margin-bottom:4px}
+.termbtn{flex:none;display:inline-grid;place-items:center;min-width:34px;padding:0 10px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:var(--ink);text-decoration:none}
+.cb{position:relative;margin:0 0 .6em}
+.cb pre{margin:0;padding-right:72px}
+.cpy{position:absolute;top:6px;right:6px;border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:7px;padding:5px 10px;min-height:30px;font:600 12.5px 'JetBrains Mono',monospace;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cpy.copied{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.ai :not(pre)>code{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.ai :not(pre)>code.copied{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+
+/* "/" commands: button in the composer, sheet (phone) / popover (desktop), type-ahead list */
+.composer{position:relative}
+.slash{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;border:0;background:none;font:700 19px 'JetBrains Mono',monospace;color:var(--dim);cursor:pointer;flex:none}
+.slash:hover{background:var(--card2);color:var(--ink)}
+.cmdsug,.cmdpanel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px}
+.cmdsug{position:absolute;left:0;right:0;bottom:calc(100% + 6px);z-index:31;max-height:min(330px,45vh);overflow-y:auto}
+.cmdsheet{position:absolute;left:0;bottom:calc(100% + 6px);z-index:31;width:min(440px,100%)}
+.cmdpanel{display:flex;flex-direction:column;max-height:min(440px,60vh)}
+.cmdpanel input{font:inherit;font-size:16px;color:inherit;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin:2px 2px 6px;flex:none;min-width:0}
+.cmdrows{overflow-y:auto;overscroll-behavior:contain;min-height:0}
+.cmdrows .popl:first-child{border-top:0;margin-top:0}
+.cmdrow{display:flex;flex-direction:column;gap:1px;width:100%;text-align:left;border:0;background:none;color:inherit;padding:8px 10px;border-radius:9px;cursor:pointer;min-width:0}
+.cmdrow:hover,.cmdrow.on{background:var(--card2)}
+.cmdrow b{font:600 14.5px 'JetBrains Mono',monospace;overflow-wrap:anywhere}
+.cmdrow b i{font-style:normal;font-weight:400;color:var(--dim)}
+.cmdrow span{font-size:13.5px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmdnone{padding:12px 10px;color:var(--dim)}
+@media (max-width:760px){
+  /* Phone: a real bottom sheet over everything, with a dimmed backdrop to tap away. */
+  .cmdsheet{position:fixed;inset:0;width:auto;z-index:60;background:rgb(0 0 0 / .35);display:flex;align-items:flex-end}
+  .cmdsheet[hidden]{display:none}
+  .cmdpanel{width:100%;max-height:72vh;border-radius:18px 18px 0 0;border-bottom:0;padding:10px 10px calc(10px + env(safe-area-inset-bottom))}
+  .cmdrow{padding:10px}
+}
+.card.dlg.screen .body{max-height:min(420px,50vh);overflow:auto}
+.card.dlg.screen .hl{white-space:pre;word-break:normal;font-size:12.5px}
+.card .acts.keys{flex-wrap:wrap}
+.card .acts.keys .btn{min-width:44px}
+/* steps box: running step, minimise / bring back after the turn */
+.planbox .ph{align-items:center}
+.planbox .prun{display:flex;gap:8px;margin-top:4px;min-width:0}
+.planbox .prun i{font-style:normal;color:var(--pk);flex:none}
+.planbox .prun b{flex:none}
+.planbox .prun .pw{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.planbox .prun .pr{color:var(--dim);flex:none}
+.planbox .pmin{flex:none;background:none;border:1px solid var(--dim);color:var(--dim);border-radius:4px;width:30px;height:26px;font:inherit;cursor:pointer}
+.planbox .pv{margin-top:6px}
+.planbox .pview,.planbox .pshow{background:none;border:1px solid var(--good);color:var(--good);border-radius:4px;padding:3px 10px;font:inherit;cursor:pointer;min-height:30px}
+.planbox.mini{border:none;padding:0;background:none}
+/* background commands still running (room status "shell") */
+.dot.shell{background:var(--info);opacity:.85}
+.bgtasks{border:1px dashed var(--info);border-radius:6px;padding:6px 12px;margin-bottom:10px;font:13px/1.5 'JetBrains Mono',monospace;color:var(--dim)}
+.bgtasks .bgh{color:var(--info)}
+.bgtasks .bgl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dock.sheet .bgtasks{display:none!important}
+.planbox .ph .pt{flex:1}
+/* Message times + a line for each new day. */
+.ts{flex:none;align-self:flex-start;margin-left:auto;padding-top:3px;font:500 11px 'JetBrains Mono',monospace;color:var(--dim);white-space:nowrap;opacity:.8}
+.day{display:flex;align-items:center;gap:10px;font:600 12px 'JetBrains Mono',monospace;color:var(--dim)}
+.day::before,.day::after{content:'';flex:1;border-top:1px solid var(--line)}
+@media (max-width:760px){.ts{font-size:10px}}
+/* Offline rooms (closed to free memory; tap to wake) */
+.offh{margin:14px 12px 4px;font:600 12px 'JetBrains Mono';color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+.offh small{text-transform:none;letter-spacing:0;font-weight:500;margin-left:6px;opacity:.8}
+.room.off{cursor:pointer;opacity:.55}
+.room.off:hover,.room.off:focus-visible{opacity:.85}
+.room.off.waking{opacity:.85;pointer-events:none}
+.room.off .fgt{flex:none;min-width:32px;height:32px;margin:-6px -6px -6px 0;border-radius:8px;border:0;background:none;color:var(--dim);font:600 13px Inter;padding:0 8px}
+.room.off .fgt.sure{background:var(--card2);color:var(--bad, #e5484d)}
+/* Drag-and-drop: whole-window drop zone while files are dragged over */
+body.dropping::after{content:'Drop files to attach';position:fixed;inset:12px;z-index:9999;display:grid;place-items:center;border:3px dashed var(--accent);border-radius:var(--r);background:color-mix(in srgb,var(--bg) 82%,transparent);color:var(--ink);font-size:22px;font-weight:600;pointer-events:none}
+
+/* Hidden twin of the message box, only used to measure how tall the draft is. */
+.twin{position:absolute!important;visibility:hidden;pointer-events:none;height:auto!important;min-height:0!important;max-height:none!important;overflow:hidden;left:-9999px;top:0}
+/* iPhone: never inflate text on its own, so the phone shows the same type as the desktop. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* A file that couldn't be attached (e.g. a HEIC the browser can't convert) says so under the thumbnails. */
+.attach-err{display:block;flex-basis:100%;color:#d9534f;font-size:13px;font-style:normal;margin-top:4px}
+.room.unread .nm{font-weight:800;color:var(--ink)}
+.room.unread .dot{background:var(--accent);opacity:1;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.room .newpill{flex:none;font:800 11px 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:var(--bg);padding:3px 8px;border-radius:999px}
+.back{position:relative}
+.back.has::after{content:attr(data-n);position:absolute;top:-7px;right:-9px;min-width:15px;height:15px;padding:0 4px;border-radius:999px;background:var(--accent);color:var(--bg);font:800 10px/15px 'JetBrains Mono',monospace;text-align:center}
+/* agent ↔ agent: never the user's bubble — a purple card, ↘ in / ↗ out; handoffs lay out their fields */
+:root{--agent:#6d3fd6}:root[data-theme=night]{--agent:#b18cff}:root[data-theme=term]{--agent:#c9b1ff}
+.agent{border:1.5px solid color-mix(in srgb,var(--agent) 55%,transparent);border-left-width:4px;background:color-mix(in srgb,var(--agent) 9%,var(--card));border-radius:12px;padding:10px 14px 12px;min-width:0}
+.agent.out{border-style:dashed;border-left-style:solid;background:color-mix(in srgb,var(--agent) 4%,transparent)}
+.agent .ah{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.agent .ah .ar{color:var(--agent);font:800 16px 'JetBrains Mono',monospace}
+.agent .ah b{color:var(--agent);font:700 14px 'JetBrains Mono',monospace;letter-spacing:.01em}
+.agent .ah .ts{margin-left:auto}
+.agent .ah .btn{margin-left:0}
+.agent .task{font-weight:700;font-size:16px;line-height:1.4;margin:2px 0 6px}
+.agent dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 12px;font-size:14.5px;line-height:1.45;margin:0}
+.agent dt{font:700 11.5px 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);padding-top:3px}
+.agent dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.agent dd p{margin:0}
+.agent.hoff.done .task::before{content:'✓ ';color:var(--good)}
+@media (max-width:760px){.agent dl{grid-template-columns:1fr}.agent dt{padding-top:6px}}
+.btn.sm{min-height:28px;padding:4px 11px;font-size:12.5px}
+.hoffbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1.5px solid var(--agent);border-left-width:4px;background:color-mix(in srgb,var(--agent) 12%,var(--card));border-radius:12px;padding:8px 10px 8px 12px;margin-bottom:8px}
+.hoffbar .hl{display:flex;gap:10px;align-items:center;flex:1;min-width:200px}
+.hoffbar .ar{color:var(--agent);font:800 18px 'JetBrains Mono',monospace}
+.hoffbar small{display:block;font:700 11px 'JetBrains Mono',monospace;color:var(--agent);text-transform:uppercase;letter-spacing:.05em}
+.hoffbar b{display:block;font-size:14.5px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.hoffbar .hb{display:flex;gap:6px;flex-wrap:wrap}
+.room .hft{flex:none;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 11px 'JetBrains Mono',monospace;color:var(--agent);border:1.5px solid color-mix(in srgb,var(--agent) 60%,transparent);border-radius:999px;padding:2px 7px}
